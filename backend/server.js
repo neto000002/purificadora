@@ -8,7 +8,7 @@ if (!process.env.JWT_SECRET) {
 
 const express = require("express");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 const { authenticateToken } = require("./middlewares/auth"); // Importamos el middleware de autenticación
@@ -16,14 +16,14 @@ const { authenticateToken } = require("./middlewares/auth"); // Importamos el mi
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configuración de PostgreSQL
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "purificadora",
-  password: "1234",
-  port: 5432,
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
 });
+
 
 pool.connect()
   .then(() => console.log("✅ Conectado a PostgreSQL"))
@@ -33,7 +33,12 @@ module.exports = { pool }; // Exportamos `pool` para usarlo en las rutas
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ['https://purificadoradiamante.vercel.app'], // Reemplaza con tu dominio real de Vercel
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
+
 
 // Importar rutas de los repartidores
 const deliveryRoutes = require("./routes/deliverymen");
@@ -141,5 +146,6 @@ app.use("/api/fiados", fiadosRoutes);
 
 // Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+
