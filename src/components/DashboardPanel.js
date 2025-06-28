@@ -8,7 +8,7 @@ const DashboardPanel = () => {
 
   const handleLogout = () => {
     // Lógica de logout, limpiar sesión, tokens, etc.
-window.location.href = 'http://localhost:3000/';
+window.location.href = '`${process.env.REACT_APP_API_URL}/login';
   };
 
   // Lista de botones excepto logout
